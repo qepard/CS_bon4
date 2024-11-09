@@ -21,17 +21,19 @@
                 <div class="searchNbutton">
                     <div class="search_box">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z" stroke="#464646" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        <input type="text" size="15" placeholder="Search for notes"/>
+                        <input id="a" type="text" size="15" placeholder="Search for notes"/>
                     </div>
-                    <div class="create_button" onclick="">
+                    <div id="addNoteButton" class="create_button" onclick="createNote()">
                         <svg viewBox="0 0 15 15"><path d="M5.938 1.32a1.32 1.32 0 012.64 0V13.2a1.32 1.32 0 01-2.64 0V1.32z"></path><path d="M13.199 5.94a1.32 1.32 0 110 2.64H1.319a1.32 1.32 0 010-2.64h11.88z"></path></svg>
                     </div>
                 </div>
-                <p class="tn_label">Total notes: </p>
-                <div class="notes_list"></div>
+                <p class="tn_label">Total notes: 0</p>
+                <div class="border_under_tn"></div>
+                <div class="notes_list" id="noteList"></div>
             </div>
             <div class="notes"></div>
         </div>
     </div>
+    <script src="script.js"></script>
 </body>
 </html>
