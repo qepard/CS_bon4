@@ -1,31 +1,58 @@
 html body{
     background-color: #141414;
     margin: 15px;
-}
-
-.menu{
-    display: flex;
+    font-family: "Ubuntu";
 }
 
 .header{
-    height: 60px;
+    height: calc(100vh - 93.5vh);
     display: flex;
 }
 
+.account_pfp{
+    background-color: #e6e6e6;
+    width: calc(100vh - 95vh);
+    height: calc(100vh - 95vh);
+    border-radius: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    margin-left: auto;
+    cursor: pointer;
+}
+
+.account_pfp svg{
+    fill: #6b6b6b;
+    width: calc(100vh - 97vh);
+    height: calc(100vh - 97vh);
+}
+
+/* Main content syle */
 .content{
     display: flex;
 }
 
+/* Side bar style */
 .sidebar{
     background-color: black;
-    height: calc(100vh - 85px);
-    width: calc(100vh - 27%);
+    height: calc(100vh - 10vh);
+    width: calc(100vh - 57vh);
     padding: 20px;
     box-sizing: border-box;
 
     border-radius: 20px;
 }
 
+/* p "All notes" style */
+.an_label{
+    color: #dedede;
+    margin-left: calc(100vh - 98vh);
+    font-size: calc(100vh - 96vh);
+    font-weight: 600;
+    user-select: none;
+}
+
+/* Style for search and "create new note" button div */
 .searchNbutton{
     display: flex;
 }
@@ -36,14 +63,37 @@ html body{
     width: calc(100vh - 70vh);
     border-radius: 40px;
     margin: auto;
-    cursor: pointer;
+    cursor: text;
+    display: flex;
 }
 
+/* Style for magnifier svg */
 .search_box svg{
-    margin-top: 6px;
-    margin-left: 6px;
-    width: 30px;
-    height: 30px;
+    margin-top: calc(100vh - 99vh);
+    margin-left: calc(100vh - 98vh);
+    margin-right: calc(100vh - 99vh);
+    width: calc(100vh - 97vh);
+    height: calc(100vh - 97vh);
+}
+
+/* Input box style */
+.search_box input{
+    background: none;
+    border: none;
+    outline: none;
+    width: 100%;
+
+    /* Input text style */
+    color: #FFFFFF;
+    font-size: calc(100vh - 98.2vh);
+    font-family: "Ubuntu";
+}
+
+/* Style for "Search for notes" label */
+.search_box input::placeholder{
+    user-select: none;
+    color: #585858;
+    font-size: calc(100vh - 98vh);
 }
 
 .create_button{
@@ -53,17 +103,44 @@ html body{
     border-radius: 100%;
     margin: auto;
     cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    display: flex;
 }
 
 .create_button:hover{
-    background: linear-gradient(145deg, #f9e863 35%, #efb44f 55%);
+    background: linear-gradient(145deg, #e0d259 35%, #cc9943 55%);
+}
+
+/* Svg "+" style */
+.create_button svg{
+    background: none;
+    width: calc(100vh - 97.5vh);
+    height: calc(100vh - 97.5vh);
+    fill: #FFFFFF;
+}
+
+/* Style for "Total notes:" label */
+.tn_label{
+    color: #acacac;
+    font-size: calc(100vh - 98.5vh);
+    margin-left: calc(100vh - 98vh);
+    user-select: none;
+}
+
+.notes_list{
+    margin-top: 10px;
+    width: 100%;
+    height: calc(100vh - 36vh);
+    display: flex;
 }
 
 .notes{
     background-color: black;
-    height: calc(100vh - 85px);
-    width: calc(100% - calc(100vh - 27%));
+    height: calc(100vh - 10vh);
+    width: calc(100% - calc(100vh - 57vh));
     box-sizing: border-box;
     margin-left: 15px;
     border-radius: 20px;
+    cursor: progress;
 }
