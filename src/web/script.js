@@ -116,4 +116,11 @@ function NoteInterface() {
 
     document.getElementById("notes_interface").appendChild(format_bar)
 
+    const edit_area = document.createElement('div');
+    edit_area.classList.add('edit_area');
+
+    
+    edit_area.setAttribute('contenteditable', 'true');
+
+    document.getElementById("notes_interface").appendChild(edit_area)
 }

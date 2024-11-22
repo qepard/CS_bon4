@@ -244,6 +244,24 @@ html body::-webkit-scrollbar{
     height: calc(100vh - 96.8vh);
 }
 
-#editor-container {
-    background-color: white;
+.edit_area {
+    /* div styles */
+    width: auto;
+    height: calc(100vh - 19vh);
+    margin-left: calc(100vh - 99vh);
+    margin-right: calc(100vh - 99vh);
+    border: none;
+    padding: 10px;
+    overflow-y: auto;
+    box-sizing: border-box;
+
+    /* text-in styles */
+    color: #dedede;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    
+}
+
+.edit_area:focus {
+    outline: none;
 }
