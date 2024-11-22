@@ -184,5 +184,66 @@ html body::-webkit-scrollbar{
     box-sizing: border-box;
     margin-left: 15px;
     border-radius: 20px;
-    cursor: progress;
+}
+
+.format_bar {
+    display: flex;
+    height: calc(100vh - 93vh);
+    border-bottom: calc(100vh - 99.7vh) solid #171717;
+    margin-left: calc(100vh - 99vh);
+    margin-top: calc(100vh - 99vh);
+    margin-right: calc(100vh - 99vh);
+}
+
+.format_bar div{
+    background: none;
+    width: calc(100vh - 94vh);
+    height: calc(100vh - 94vh);
+    border-radius: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.format_bar div:hover{
+    background-color: #2C2C2E;
+}
+
+.format_bar div svg{
+    fill: #dedede;
+    width: calc(100vh - 96vh);
+    height: calc(100vh - 96vh);
+}
+
+#h1 svg {
+    width: calc(100vh - 97vh);
+    height: calc(100vh - 97vh);
+}
+
+#h2 svg {
+    width: calc(100vh - 97vh);
+    height: calc(100vh - 97vh);
+}
+
+#h3 svg {
+    width: calc(100vh - 97vh);
+    height: calc(100vh - 97vh);
+}
+
+#strikethrough svg{
+    fill: none;
+}
+
+#delete_note {
+    margin-left: auto;
+}
+
+#delete_note svg{
+    width: calc(100vh - 96.8vh);
+    height: calc(100vh - 96.8vh);
+}
+
+#editor-container {
+    background-color: white;
 }
