@@ -171,10 +171,15 @@ function NoteInterface() {
 
     document.getElementById("notes_interface").appendChild(format_bar)
 
+    // create title bar
+    const title_bar = document.createElement('input')
+    title_bar.id = 'title_bar'
+    title_bar.setAttribute('placeholder', 'Title')
+    document.getElementById("notes_interface").appendChild(title_bar)
+
     const edit_area = document.createElement('div');
     edit_area.classList.add('edit_area');
 
-    
     edit_area.setAttribute('contenteditable', 'true');
 
     document.getElementById("notes_interface").appendChild(edit_area)

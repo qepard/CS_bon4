@@ -273,24 +273,54 @@ html body::-webkit-scrollbar{
     height: calc(100vh - 96.8vh);
 }
 
+#title_bar {
+    background: none;
+    width: calc(100% - 2.3vh);
+    outline: none;
+    margin-left: calc(100vh - 98vh);
+    margin-top: calc(100vh - 99vh);
+    margin-bottom: calc(100vh - 98vh);
+    border: none;
+
+    color: #FFFFFF;
+    font-size: xx-large;
+    font-family: 'Ubuntu';
+}
+
 .edit_area {
     /* div styles */
     width: auto;
-    height: calc(100vh - 19vh);
+    height: calc(100vh - 26vh);
     margin-left: calc(100vh - 99vh);
     margin-right: calc(100vh - 99vh);
     border: none;
     padding: 10px;
     overflow-y: auto;
     box-sizing: border-box;
+    outline: none;
 
     /* text-in styles */
     color: #dedede;
+    font-size: large;
     word-wrap: break-word;
     white-space: pre-wrap;
-    
 }
 
-.edit_area:focus {
-    outline: none;
+/* Style for edit area scroll bar */
+.edit_area::-webkit-scrollbar{
+    width: calc(100vh - 99.45vh);
+    border-radius: 100%;
+}
+
+.edit_area::-webkit-scrollbar-track{
+    background: none;
+}
+
+.edit_area::-webkit-scrollbar-track:hover{
+    background-color: #0c0c0c;
+}
+
+.edit_area::-webkit-scrollbar-thumb{
+    background-color: #444444;
+    border-radius: 10px;
 }
