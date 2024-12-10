@@ -12,21 +12,24 @@ function generateRandomString(length) {
 }
 
 function createNote() {
-    // Create a new div for the note
     const note_in_list = document.createElement('div');
-    
+
     const randomString = '_' + generateRandomString(4);
-
     note_in_list.id = randomString;
-    
-    // Add the 'note_in_list' class
-    note_in_list.classList.add('note_in_list' + randomString);
 
-    note_in_list.addEventListener('click', function() {
-        openNote(randomString); // Passing randomString to openNote
+    note_in_list.classList.add('note_in_list');
+
+    const defaultTitle = '';
+
+    const noteTitle = document.createElement('div');
+    noteTitle.classList.add('note_title');
+    noteTitle.textContent = defaultTitle;
+    note_in_list.appendChild(noteTitle);
+
+    note_in_list.addEventListener('click', function () {
+        openNoteWithSync(randomString);
     });
 
-    // Adding a note to a container
     document.getElementById('noteList').appendChild(note_in_list);
 
     update_Notes_counter(true);
@@ -45,10 +48,31 @@ function update_Notes_counter(increment) {
     label.textContent = `Total notes: ${noteCount}`;
 }
 
+// Function to open a note and synchronize the title (to be finalized)
+function openNoteWithSync(noteId) {
+    openNote();
+
+    const title_bar = document.getElementById('title_bar');
+
+    const noteElement = document.getElementById(noteId);
+
+    // connect the current title from the notes list to title_bar
+    const noteTitle = noteElement.querySelector('.note_title');
+    title_bar.value = noteTitle.textContent;
+
+    // delete old handlers, if there were any (so that there is no duplication)
+    title_bar.replaceWith(title_bar.cloneNode(true));
+    const newTitleBar = document.getElementById("title_bar");
+
+    // add a handler to synchronize the current note
+    newTitleBar.addEventListener('input', function () {
+        noteTitle.textContent = newTitleBar.value; // update the text for the current note only
+    });
+}
+
 function openNote(NoteId) {
     NoteInterface();
 }
-
 
 function NoteInterface() {
 
@@ -156,10 +180,10 @@ function NoteInterface() {
         element.id = elementNames[i];
 
         // set onclick action
-        element.setAttribute('onclick', elementAction[i])
+        element.setAttribute('onclick', elementAction[i]);
 
         // set tooltip
-        element.setAttribute('tooltip', elementTooltip[i])
+        element.setAttribute('tooltip', elementTooltip[i]);
 
         // create container for svg
         const svgContainer = document.createElement('div');
@@ -169,18 +193,69 @@ function NoteInterface() {
         format_bar.appendChild(element);
     }
 
-    document.getElementById("notes_interface").appendChild(format_bar)
+    document.getElementById("notes_interface").appendChild(format_bar);
 
     // create title bar
-    const title_bar = document.createElement('input')
-    title_bar.id = 'title_bar'
-    title_bar.setAttribute('placeholder', 'Title')
-    document.getElementById("notes_interface").appendChild(title_bar)
+    const title_bar = document.createElement('input');
+    title_bar.id = 'title_bar';
+    title_bar.setAttribute('placeholder', 'Title');
+    title_bar.setAttribute('autocomplete', 'off');
+    title_bar.setAttribute('maxlength', '30')
+    document.getElementById("notes_interface").appendChild(title_bar);
 
     const edit_area = document.createElement('div');
     edit_area.classList.add('edit_area');
-
     edit_area.setAttribute('contenteditable', 'true');
+    // for fix change edit_area type bug
+    const empty_div_br = document.createElement('div');
+    const empty_br = document.createElement('br');
+    empty_div_br.appendChild(empty_br);
+    edit_area.appendChild(empty_div_br);
+    
+    document.getElementById("notes_interface").appendChild(edit_area);
+}
 
-    document.getElementById("notes_interface").appendChild(edit_area)
+function format_text(textManipulation = null, action = null){
+    document.querySelector('.edit_area').addEventListener('keyup', () => {
+        const caretDiv = getCurrentCaretElement();
+        if (caretDiv) {
+            switch (action){
+                case 'input':
+
+                    break;
+                case 'blockquote':
+
+                    break;
+                case 'css':
+                    
+                    break;
+                case null:
+                    caretDiv.outerHTML = caretDiv.outerHTML.replace(new RegExp(`^<${caretDiv.tagName.toLowerCase()}`), `<${textManipulation}`)
+                                                           .replace(new RegExp(`</${caretDiv.tagName.toLowerCase()}$`), `</${textManipulation}>`);
+                    break;
+            }
+          console.log('The carriage is in the element:', caretDiv);
+          console.log('Text inside the element:', caretDiv.textContent);
+        }
+      });
+}
+ 
+function getCurrentCaretElement() {
+    const selection = window.getSelection();
+
+    if (!selection.rangeCount) {
+        return null; // there is no highlighting/carriage
+    }
+
+    const range = selection.getRangeAt(0);
+    const currentNode = range.startContainer;
+
+    const allowedTags = 'mark, h1, h2, h3, b, i, ins, del, div';
+
+    // if it is a text node, look for the nearest parent element from the list
+    const element = currentNode.nodeType === Node.TEXT_NODE
+        ? currentNode.parentElement.closest(allowedTags)
+        : currentNode.closest(allowedTags);
+
+    return element || null;
 }

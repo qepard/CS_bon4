@@ -171,6 +171,8 @@ html body::-webkit-scrollbar{
     height: calc(100vh - 86vh);
     font-size: 14px;
     cursor: pointer;
+    color: #dedede;
+    user-select: none;
 }
 
 [class^="note_in_list"]:hover{
@@ -282,14 +284,18 @@ html body::-webkit-scrollbar{
     margin-bottom: calc(100vh - 98vh);
     border: none;
 
-    color: #FFFFFF;
+    color: #dedede;
     font-size: xx-large;
     font-family: 'Ubuntu';
 }
 
+#title_bar::placeholder {
+    user-select: none;
+}
+
 .edit_area {
-    /* div styles */
-    width: auto;
+    /* textarea styles */
+    width: 100%;
     height: calc(100vh - 26vh);
     margin-left: calc(100vh - 99vh);
     margin-right: calc(100vh - 99vh);
@@ -304,6 +310,11 @@ html body::-webkit-scrollbar{
     font-size: large;
     word-wrap: break-word;
     white-space: pre-wrap;
+    caret-color: #DDCA56;
+}
+
+.edit_area mark{
+    background-color: #CC9943;
 }
 
 /* Style for edit area scroll bar */
