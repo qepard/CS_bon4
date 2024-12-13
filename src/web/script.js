@@ -1,5 +1,6 @@
 let noteCount;
 const notesCache = {};
+let lastOpenedNote = "";
 
 // Function for notes id's and etc.
 function generateRandomString(length) {
@@ -102,6 +103,8 @@ function openNoteWithSync(noteId) {
             selection.addRange(range);
         }
     });
+
+    lastOpenedNote = noteId;
 }
 
 function update_Notes_counter() {
@@ -377,12 +380,23 @@ function format_text(textManipulation = null, action = null){
                     // caretDiv.outerHTML = caretDiv.outerHTML.replace(new RegExp(`^<${caretDiv.tagName.toLowerCase()}`), `<${textManipulation}`)
                                                         //    .replace(new RegExp(`</${caretDiv.tagName.toLowerCase()}$`), `</${textManipulation}>`);
                     break;
+                case 'del_note':
+                    const div = document.getElementById(lastOpenedNote);
+                    div.remove();
+                    
+                    if (notesCache[lastOpenedNote]){
+                        delete notesCache[lastOpenedNote];
+                    }
+                    saveNotesToLocalStorage();
+                    loadNotesFromLocalStorage();
+                    break;
             }
           console.log('The carriage is in the element:', caretDiv.element);
           console.log('Text inside the element:', caretDiv.element.textContent);
           console.log('The carriage is in range:', caretDiv.range.startOffset);
           console.log('Current highlight:', caretDiv.selectedText)
           console.log(notesCache)
+          console.log(lastOpenedNote)
         }
       });
 }
