@@ -313,6 +313,10 @@ html body::-webkit-scrollbar{
     caret-color: #DDCA56;
 }
 
+.edit_area p{
+    margin: 0;
+}
+
 .edit_area mark{
     background-color: #CC9943;
 }

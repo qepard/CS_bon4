@@ -1,4 +1,5 @@
-let noteCount = 0;
+let noteCount;
+const notesCache = {};
 
 // Function for notes id's and etc.
 function generateRandomString(length) {
@@ -32,43 +33,134 @@ function createNote() {
 
     document.getElementById('noteList').appendChild(note_in_list);
 
-    update_Notes_counter(true);
+    // add a new note to the cache
+    notesCache[randomString] = {
+        title: defaultTitle,
+        content: '',
+    };
+
+    update_Notes_counter();
 }
 
-function update_Notes_counter(increment) {
-    // Increase or decrease the number of notes depending on the argument
-    if (increment) {
-        noteCount++;
-    } else {
-        noteCount--;
-    }
-
-    // Update text inside element p with class 'tn_label'
-    const label = document.querySelector('.tn_label');
-    label.textContent = `Total notes: ${noteCount}`;
-}
-
-// Function to open a note and synchronize the title (to be finalized)
+// Function to open a note and synchronize the title and content
 function openNoteWithSync(noteId) {
     openNote();
 
     const title_bar = document.getElementById('title_bar');
+    const edit_area = document.querySelector('.edit_area');
 
     const noteElement = document.getElementById(noteId);
-
-    // connect the current title from the notes list to title_bar
     const noteTitle = noteElement.querySelector('.note_title');
-    title_bar.value = noteTitle.textContent;
 
-    // delete old handlers, if there were any (so that there is no duplication)
+    // load data from the cache, if any
+    if (notesCache[noteId]) {
+        title_bar.value = notesCache[noteId].title;
+        edit_area.innerHTML = notesCache[noteId].content;
+        replaceDivWithP(edit_area);
+    } else {
+        // if the note is not in the cache (shouldn't happen, but just in case)
+        title_bar.value = noteTitle.textContent;
+        edit_area.innerHTML = "";
+    }
+
+    // delete old event handlers
     title_bar.replaceWith(title_bar.cloneNode(true));
-    const newTitleBar = document.getElementById("title_bar");
+    edit_area.replaceWith(edit_area.cloneNode(true));
 
-    // add a handler to synchronize the current note
+    const newTitleBar = document.getElementById("title_bar");
+    const newEditArea = document.querySelector('.edit_area');
+
+    // add event handlers for synchronization
     newTitleBar.addEventListener('input', function () {
-        noteTitle.textContent = newTitleBar.value; // update the text for the current note only
+        noteTitle.textContent = newTitleBar.value;
+        // update header in the cache
+        notesCache[noteId].title = newTitleBar.value;
+    });
+
+    newEditArea.addEventListener('input', function () {
+        // update content in the cache using innerHTML
+        notesCache[noteId].content = newEditArea.innerHTML;
+    });
+
+    // handler for Enter
+    newEditArea.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const newParagraph = document.createElement('p');
+            newParagraph.innerHTML = '<br>';
+
+            // insert a new paragraph after the current one
+            const selection = window.getSelection();
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(newParagraph);
+
+            // move the cursor to a new paragraph
+            range.setStart(newParagraph, 0);
+            range.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
     });
 }
+
+function update_Notes_counter() {
+    const notesList = document.getElementById('noteList');
+    noteCount = notesList.querySelectorAll('.note_in_list').length;
+
+    // update text inside .tn_label
+    const label = document.querySelector('.tn_label');
+    label.textContent = `Total notes: ${noteCount}`;
+}
+
+function saveNotesToLocalStorage() {
+    localStorage.setItem('notes', JSON.stringify(notesCache));
+    localStorage.setItem('noteCount', noteCount);
+}
+
+function loadNotesFromLocalStorage() {
+    const storedNotes = localStorage.getItem('notes');
+    const storedNoteCount = localStorage.getItem('noteCount');
+
+    if (storedNotes) {
+        const parsedNotes = JSON.parse(storedNotes);
+        for (const noteId in parsedNotes) {
+            // create note list items based on data from localStorage
+            const note_in_list = document.createElement('div');
+            note_in_list.id = noteId;
+            note_in_list.classList.add('note_in_list');
+
+            const noteTitle = document.createElement('div');
+            noteTitle.classList.add('note_title');
+            noteTitle.textContent = parsedNotes[noteId].title;
+            note_in_list.appendChild(noteTitle);
+
+            note_in_list.addEventListener('click', function () {
+                openNoteWithSync(noteId);
+            });
+
+            document.getElementById('noteList').appendChild(note_in_list);
+
+            // add note to cache
+            notesCache[noteId] = {
+                title: parsedNotes[noteId].title,
+                content: parsedNotes[noteId].content,
+            };
+        }
+    }
+
+    if (storedNoteCount) {
+        noteCount = parseInt(storedNoteCount);
+        update_Notes_counter(false); // do not increment counter because it is already loaded
+    }
+    update_Notes_counter();
+}
+
+// call load function at startup
+loadNotesFromLocalStorage();
+
+// call save function when closing/refreshing the page
+window.addEventListener('beforeunload', saveNotesToLocalStorage);
 
 function openNote(NoteId) {
     NoteInterface();
@@ -203,16 +295,68 @@ function NoteInterface() {
     title_bar.setAttribute('maxlength', '30')
     document.getElementById("notes_interface").appendChild(title_bar);
 
+    // сам edit_area
     const edit_area = document.createElement('div');
     edit_area.classList.add('edit_area');
     edit_area.setAttribute('contenteditable', 'true');
-    // for fix change edit_area type bug
-    const empty_div_br = document.createElement('div');
-    const empty_br = document.createElement('br');
-    empty_div_br.appendChild(empty_br);
-    edit_area.appendChild(empty_div_br);
     
+    // listening to changes in the edit_area
+    edit_area.addEventListener('input', function () {
+        replaceDivWithP(edit_area);
+    });
+
+    edit_area.addEventListener('keydown', function (event) {
+        // if enter is pressed, prevent the event by default
+        if (event.key === 'Enter') {
+            event.preventDefault();
+
+            // create a new p and focus on it
+            const newParagraph = document.createElement('p');
+            // add an empty p with <br> to display a newline
+            newParagraph.innerHTML = '<br>';
+            edit_area.appendChild(newParagraph);
+
+            // move cursor to a new p
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.setStart(newParagraph, 0);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    });
+
     document.getElementById("notes_interface").appendChild(edit_area);
+}
+
+function replaceDivWithP(editor) {
+    const children = editor.childNodes;
+    for (let i = 0; i < children.length; i++) {
+        const node = children[i];
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            if (node.tagName === 'DIV') {
+                const p = document.createElement('p');
+                p.innerHTML = node.innerHTML;
+                editor.replaceChild(p, node);
+            } else if (node.tagName !== 'P') {
+                const p = document.createElement('p');
+                p.innerHTML = node.outerHTML || node.textContent;
+                editor.replaceChild(p, node);
+            }
+        } else if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== "") {
+            const p = document.createElement('p');
+            p.textContent = node.textContent;
+            editor.replaceChild(p, node);
+        }
+    }
+
+    // delete empty divs
+    const emptyDivs = editor.querySelectorAll('div:empty');
+    emptyDivs.forEach((emptyDiv) => emptyDiv.remove());
+
+    // add <br> to the empty <p>
+    const emptyPs = editor.querySelectorAll('p:empty');
+    emptyPs.forEach((emptyP) => emptyP.innerHTML = '<br>');
 }
 
 function format_text(textManipulation = null, action = null){
@@ -230,21 +374,24 @@ function format_text(textManipulation = null, action = null){
                     
                     break;
                 case null:
-                    caretDiv.outerHTML = caretDiv.outerHTML.replace(new RegExp(`^<${caretDiv.tagName.toLowerCase()}`), `<${textManipulation}`)
-                                                           .replace(new RegExp(`</${caretDiv.tagName.toLowerCase()}$`), `</${textManipulation}>`);
+                    // caretDiv.outerHTML = caretDiv.outerHTML.replace(new RegExp(`^<${caretDiv.tagName.toLowerCase()}`), `<${textManipulation}`)
+                                                        //    .replace(new RegExp(`</${caretDiv.tagName.toLowerCase()}$`), `</${textManipulation}>`);
                     break;
             }
-          console.log('The carriage is in the element:', caretDiv);
-          console.log('Text inside the element:', caretDiv.textContent);
+          console.log('The carriage is in the element:', caretDiv.element);
+          console.log('Text inside the element:', caretDiv.element.textContent);
+          console.log('The carriage is in range:', caretDiv.range.startOffset);
+          console.log('Current highlight:', caretDiv.selectedText)
+          console.log(notesCache)
         }
       });
 }
- 
+
 function getCurrentCaretElement() {
     const selection = window.getSelection();
 
     if (!selection.rangeCount) {
-        return null; // there is no highlighting/carriage
+        return { element: null, range: null, selectedText: null };  // there is no highlighting/carriage
     }
 
     const range = selection.getRangeAt(0);
@@ -257,5 +404,12 @@ function getCurrentCaretElement() {
         ? currentNode.parentElement.closest(allowedTags)
         : currentNode.closest(allowedTags);
 
-    return element || null;
+    // current selected text
+    const selectedText = selection.toString()
+
+    return { 
+        element: element || null, 
+        range: range, 
+        selectedText: selectedText || null 
+    };
 }
